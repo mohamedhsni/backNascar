@@ -12,11 +12,7 @@ const swaggerOptions = {
             {
                 url: 'http://localhost:3000',
                 description: 'Development server',
-            },
-              {
-                url: 'https://backnascar.onrender.com',
-                description: 'Development server',
-            },
+            }
         ],
     },
     apis: ['./routes/*.js'], // Path to the API routes

@@ -2,6 +2,7 @@ const express = require('express');
 const User = require('../models/User');
 const { faker } = require('@faker-js/faker');
 const { default: UserResponse } = require('../response types/UserResponse');
+const mongoose = require('mongoose');
 
 const router = express.Router();
 
@@ -134,7 +135,9 @@ router.post('/login', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *           pattern: '^[a-fA-F0-9]{24}$'
+ *           example: '64b9f1a2e3d4c5b6a7f8e9d0'
+ *         description: User ID (MongoDB ObjectId hex string)
  *     responses:
  *       200:
  *         description: User found successfully
@@ -149,7 +152,14 @@ router.post('/login', async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const id = req.params.id;
+
+        // Validate that id is a valid MongoDB ObjectId hex string
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json(new UserResponse(null, 'Invalid user id format', true));
+        }
+
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json(new UserResponse(null, 'User not found', true));
         }
