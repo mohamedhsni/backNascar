@@ -158,6 +158,41 @@ router.get('/:id', async (req, res) => {
         res.status(500).json(new UserResponse(null, err.message, true));
     }
 });
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: List all users
+ *     description: Retrieve a list of all users
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: boolean
+ *       500:
+ *         description: Server error
+ */
+router.get('/', async (req, res) => {
+    try {
+        const user = await User.find();
+        res.status(200).json(new UserResponse(user, 'User found successfully', false));
+    } catch (err) {
+        res.status(500).json(new UserResponse(null, err.message, true));
+    }
+});
 
 
 module.exports = router;
